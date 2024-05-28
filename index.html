@@ -1,0 +1,160 @@
+<html>
+    <head>
+        <script type="text/javascript" src="https://cdn.canvasjs.com/canvasjs.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+        <script>
+            var accessToken = "f973f1205d6939fc25c5bb057085b3ae65611e40";
+            var deviceID = "0a10aced202194944a04a138";
+            var url = "https://api.particle.io/v1/devices/" + deviceID + "/lectura";
+            var dataPoints = [];
+            function callback(data, status) {
+              if (status == "success") {
+                hum = parseFloat(data.result);
+                hum = hum.toFixed(2);
+                //g.refresh(hum);
+                dataPoints.push({ x: new Date(), y: parseFloat(hum) });
+                chart.render();
+                setTimeout(getReading, 60000);
+              } else {
+                alert("There was a problem");
+              }
+            }
+            function getReading() {
+              $.get(url, { access_token: accessToken }, callback);
+            }
+          </script>
+
+        <script type="text/javascript">
+            var chart
+            window.onload = function () {
+              chart = new CanvasJS.Chart("chartContainer",
+              {
+          
+                title:{
+                text: "Registro de Humedad en Planta"
+                },
+                 data: [
+                {
+                  type: "line",
+          
+                  dataPoints: dataPoints
+                }
+                ]
+              });
+          
+              chart.render();
+            }
+            </script>
+    </head>
+    <body style="background-image: linear-gradient(blue, green);">
+        <div style="justify-content: center;">
+            <div style="width: auto; justify-content: center; align-items: center; text-align: center; font-family: sans-serif; font-weight: bold; font-size: large;">
+                <h1>Proyecto Final IoT</h1>
+                <h2>AquaPlant</h2>
+                <script>
+                    $(document).ready(function() {
+                        getReading();
+                    });
+                </script>
+            </div>
+            <div>
+                <div style="display: flex; flex-direction: row; justify-content: center; padding-bottom: 10px;">
+                    <div>
+                        <label style="font-family: fantasy; font-size: 50px; padding-right: 10px;" for="">Hora: </label>
+                        <input  type="number" id="hora" onchange="sendDataToServer2()" max="24" min="0" style="border-radius: 10px; height: 100; font-size: 100px; text-align: center;">
+                        <script type=text/javascript>
+                            function sendDataToServer2() {
+                                const serverUrl = 'https://api.particle.io/v1/devices/0a10aced202194944a04a138/hora'; // Cambia esto a la URL correcta
+                                const accessToken = 'f973f1205d6939fc25c5bb057085b3ae65611e40';
+                                const params = document.getElementById('hora').value
+                    
+                                const xhr = new XMLHttpRequest();
+                                xhr.open('POST', serverUrl, true);
+                                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded'); 
+                    
+                                xhr.onreadystatechange = function() {
+                                if (xhr.readyState === 4) {
+                                    if (xhr.status === 200) {
+                                        const response = JSON.parse(xhr.responseText);
+                                        console.log('Respuesta del servidor:', response);
+                                        // Puedes manejar la respuesta del servidor aquí
+                                        console.log(response)
+                                    } else {
+                                        console.error('Error al enviar la solicitud:', xhr.statusText);
+                                    }
+                                }
+                            };
+                            const data = `access_token=${encodeURIComponent(accessToken)}&params=${encodeURIComponent(params)}`;
+                            xhr.send(data); // Envía el string al servidor
+                            }
+                        </script>
+                    </div>
+                    <div>
+                        <label style="font-family: fantasy; font-size: 50px; padding-left: 5px;" for="">Minuto: </label>
+                        <input  type="number" id="minuto" onchange="sendDataToServer3()" max="59" min="0" style="border-radius: 10px; height: 100; font-size: 100px; text-align: center;">
+                        <script type=text/javascript>
+                            function sendDataToServer3() {
+                                const serverUrl = 'https://api.particle.io/v1/devices/0a10aced202194944a04a138/minuto'; // Cambia esto a la URL correcta
+                                const accessToken = 'f973f1205d6939fc25c5bb057085b3ae65611e40';
+                                const params = document.getElementById('minuto').value
+                    
+                                const xhr = new XMLHttpRequest();
+                                xhr.open('POST', serverUrl, true);
+                                xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded'); 
+                    
+                                xhr.onreadystatechange = function() {
+                                if (xhr.readyState === 4) {
+                                    if (xhr.status === 200) {
+                                        const response = JSON.parse(xhr.responseText);
+                                        console.log('Respuesta del servidor:', response);
+                                        // Puedes manejar la respuesta del servidor aquí
+                                        console.log(response)
+                                    } else {
+                                        console.error('Error al enviar la solicitud:', xhr.statusText);
+                                    }
+                                }
+                            };
+                            const data = `access_token=${encodeURIComponent(accessToken)}&params=${encodeURIComponent(params)}`;
+                            xhr.send(data); // Envía el string al servidor
+                            }
+                        </script>
+                    </div>
+                </div>
+                <div style="margin: 15px;">
+                    <div id="chartContainer" style="height: 300px; width: 100%;">
+                    </div>
+                </div>
+                <div style="justify-content: center; padding-top: 10px; align-items: center; text-align: center;">
+                    <input type="button" id="regar" onclick="sendDataToServer()" value="Regar" style="width: 300; height: 100; border-radius: 10%; font-size: 30; font-family: fantasy; background-color: rgb(58, 84, 250); color: white;"/>
+                    <script type=text/javascript>
+                        function sendDataToServer() {
+                            const serverUrl = 'https://api.particle.io/v1/devices/0a10aced202194944a04a138/regar'; // Cambia esto a la URL correcta
+                            const accessToken = 'f973f1205d6939fc25c5bb057085b3ae65611e40';
+                            const params = "regar"
+                
+                            const xhr = new XMLHttpRequest();
+                            xhr.open('POST', serverUrl, true);
+                            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded'); 
+                
+                            xhr.onreadystatechange = function() {
+                            if (xhr.readyState === 4) {
+                                if (xhr.status === 200) {
+                                    const response = JSON.parse(xhr.responseText);
+                                    console.log('Respuesta del servidor:', response);
+                                    // Puedes manejar la respuesta del servidor aquí
+                                    console.log(response)
+                                } else {
+                                    console.error('Error al enviar la solicitud:', xhr.statusText);
+                                }
+                            }
+                        };
+                        const data = `access_token=${encodeURIComponent(accessToken)}&params=${encodeURIComponent(params)}`;
+                        xhr.send(data); // Envía el string al servidor
+                        }
+                      </script>
+                </div>
+            </div>
+        </div>
+    </body>
+</html>
